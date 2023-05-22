@@ -7,13 +7,13 @@ NASM_x64	:= nasm -f win64
 NASM_x86	:= nasm -f win32
 
 NAME 		:= HiddenDesktop
-UI 			:= HVNC\ Server
+UI  		:= HVNC\ Server
 
 CLIENT 		:= client
 SERVER 		:= server
 APP_SRC 	:= $(wildcard ./$(CLIENT)/launchers/*.c)
 LAUNCHERS	:= $(APP_SRC:%.c=%.o)
-OUT         := bin
+OUT 		:= bin
 
 SCFLAGS  	:= $(SCFLAGS) -Os -fno-asynchronous-unwind-tables -nostdlib 
 SCFLAGS  	:= $(SCFLAGS) -fno-ident -fpack-struct=8 -falign-functions=1 

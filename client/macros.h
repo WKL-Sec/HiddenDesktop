@@ -9,10 +9,10 @@
 
 #if defined( _WIN64 )
     #define OFFSET( x )     x
-    #define G_END( x )	    ( ULONG_PTR )( GetIp() + 11 )
+    #define G_END( x )      ( ULONG_PTR )( GetIp() + 11 )
 #else
     #define OFFSET( x )     ( ULONG_PTR )( GetIp( ) - ( ( ULONG_PTR ) & GetIp - ( ULONG_PTR ) x ) )
-    #define G_END( x )	    ( ULONG_PTR )( GetIp() + 10 )
+    #define G_END( x )      ( ULONG_PTR )( GetIp() + 10 )
 #endif
 
 #define NT_SUCCESS( x )         ( ( NTSTATUS ) ( x ) >= 0 )

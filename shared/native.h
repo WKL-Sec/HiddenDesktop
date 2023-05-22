@@ -1,9 +1,9 @@
 
 typedef struct _UNICODE_STRING
 {
-	USHORT Length;
-	USHORT MaximumLength;
-	PWSTR Buffer;
+    USHORT Length;
+    USHORT MaximumLength;
+    PWSTR Buffer;
 } UNICODE_STRING, *PUNICODE_STRING, **PPUNICODE_STRING;
 typedef const UNICODE_STRING *PCUNICODE_STRING;
 
@@ -19,9 +19,9 @@ typedef struct _RTL_USER_PROCESS_PARAMETERS {
 #if defined(_WINNT_) && (_MSC_VER < 1300) && !defined(___PROCESSOR_NUMBER_DEFINED)
 #define ___PROCESSOR_NUMBER_DEFINED
 typedef struct _PROCESSOR_NUMBER {
-	WORD Group;
-	BYTE Number;
-	BYTE Reserved;
+    WORD Group;
+    BYTE Number;
+    BYTE Reserved;
 } PROCESSOR_NUMBER, *PPROCESSOR_NUMBER;
 #endif
 
@@ -327,18 +327,18 @@ typedef struct _TEB
 
 typedef enum _MEMORY_INFORMATION_CLASS
 {
-	MemoryBasicInformation,
-	MemoryWorkingSetInformation,
-	MemoryMappedFilenameInformation,
-	MemoryRegionInformation,
-	MemoryWorkingSetExInformation
+    MemoryBasicInformation,
+    MemoryWorkingSetInformation,
+    MemoryMappedFilenameInformation,
+    MemoryRegionInformation,
+    MemoryWorkingSetExInformation
 } MEMORY_INFORMATION_CLASS, *PMEMORY_INFORMATION_CLASS;
 
 typedef struct _STRING
 {
-	USHORT Length;
-	USHORT MaximumLength;
-	PCHAR Buffer;
+    USHORT Length;
+    USHORT MaximumLength;
+    PCHAR Buffer;
 } STRING;
 typedef STRING *PSTRING;
 
@@ -364,26 +364,26 @@ RtlInitUnicodeString(
 NTSTATUS
 NTAPI
 LdrGetProcedureAddress(
-	IN PVOID DllHandle,
-	IN OPTIONAL PANSI_STRING ProcedureName,
-	IN OPTIONAL ULONG ProcedureNumber,
-	OUT PVOID *ProcedureAddress
-	);
+    IN PVOID DllHandle,
+    IN OPTIONAL PANSI_STRING ProcedureName,
+    IN OPTIONAL ULONG ProcedureNumber,
+    OUT PVOID *ProcedureAddress
+    );
 
 NTSTATUS
 NTAPI
 LdrLoadDll(
-	IN OPTIONAL PWSTR DllPath,
-	IN OPTIONAL PULONG DllCharacteristics,
-	IN PUNICODE_STRING DllName,
-	OUT PVOID *DllHandle
-	);
+    IN OPTIONAL PWSTR DllPath,
+    IN OPTIONAL PULONG DllCharacteristics,
+    IN PUNICODE_STRING DllName,
+    OUT PVOID *DllHandle
+    );
 
 NTSTATUS
 NTAPI
 LdrUnloadDll(
-	IN PVOID DllHandle
-	);
+    IN PVOID DllHandle
+    );
 
 PVOID
 NTAPI
@@ -396,10 +396,10 @@ RtlAllocateHeap(
 BOOLEAN
 NTAPI
 RtlFreeHeap(
-	IN PVOID HeapHandle,
-	IN OPTIONAL ULONG Flags,
-	IN PVOID BaseAddress
-	);
+    IN PVOID HeapHandle,
+    IN OPTIONAL ULONG Flags,
+    IN PVOID BaseAddress
+    );
 
 NTSTATUS
 NTAPI
