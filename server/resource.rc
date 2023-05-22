@@ -1,0 +1,48 @@
+#include "winver.h"
+ 
+// id ICON "icon.ico"
+
+//
+// Version
+//
+ 
+#define VER_FILEVERSION             0,1
+#define VER_FILEVERSION_STR         "0.1"
+ 
+#define VER_PRODUCTVERSION          0,1
+#define VER_PRODUCTVERSION_STR      "0.1"
+ 
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+ 
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     VER_FILEVERSION
+PRODUCTVERSION  VER_PRODUCTVERSION
+FILEFLAGSMASK   0x3fL
+FILEFLAGS       0x0L
+FILEOS          VOS__WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "CompanyName", ""
+            VALUE "FileDescription", "HVNC Server and Operator UI"
+            VALUE "FileVersion", VER_FILEVERSION_STR
+            VALUE "InternalName", "HVNC Server.exe"
+            VALUE "LegalCopyright", ""
+            VALUE "OriginalFilename", "HVNC Server.exe"
+            VALUE "ProductName", "HVNC Server and Operator UI"
+            VALUE "ProductVersion", VER_PRODUCTVERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
