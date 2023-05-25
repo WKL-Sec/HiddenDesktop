@@ -38,7 +38,7 @@ hd-launch <command> [args]
 
 ## Demo
 
-https://github.com/WKL-Sec/HiddenDesktop/assets/9327972/c9b3fbc1-dd83-45cd-96cd-b026c9b5d827
+https://github.com/WKL-Sec/HiddenDesktop/assets/9327972/82f73393-ba44-42b4-8eae-b36b7181fac0
 
 ## Implementation Details
 
