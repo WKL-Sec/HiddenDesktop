@@ -178,7 +178,7 @@ VOID WINAPI BofMain( PBAPI_TABLE BeaconApi, PVOID Argv, INT Argc )
     Api.GetSystemTimeAsFileTime( &fileTime );
     time.LowPart = fileTime.dwLowDateTime;
     time.HighPart = fileTime.dwHighDateTime;
-    Api.sprintf( tempDir, "\\Temp\\%I64u", time.QuadPart );
+    Api.sprintf( tempDir, "\\Temp\\%llu", (unsigned long long)time.QuadPart );
     strcatA( appdataDir, tempDir );
     strcatA( chromeArgs, appdataDir );
 
